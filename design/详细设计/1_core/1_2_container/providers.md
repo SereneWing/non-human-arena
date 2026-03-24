@@ -13,11 +13,10 @@ from typing import Type, TypeVar, Callable, Any
 T = TypeVar('T')
 
 class ProviderScope(Enum):
-    """作用域"""
+    """作用域（统一命名）"""
     SINGLETON = "singleton"       # 单例（整个应用生命周期）
-    SESSION = "session"         # 会话级（会话生命周期）
-    TRANSIENT = "transient"     # 瞬态（每次请求创建新实例）
-    REQUEST = "request"         # 请求级（每个请求创建新实例）
+    SESSION = "session"           # 会话级（会话生命周期）
+    TRANSIENT = "transient"       # 临时（每次获取创建新实例）
 
 class Provider(ABC, Generic[T]):
     """提供者抽象基类"""

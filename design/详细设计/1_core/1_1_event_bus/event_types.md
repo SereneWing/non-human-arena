@@ -70,6 +70,9 @@ class EventType(Enum):
     SYSTEM_SHUTDOWN = "system.shutdown"   # 系统关闭
     SYSTEM_STARTUP = "system.startup"      # 系统启动
     ERROR = "error"                        # 通用错误
+    
+    # ==================== 会话状态事件 ====================
+    SESSION_STATE_CHANGED = "session.state_changed"  # 会话状态变更
 ```
 
 ## 二、事件类型分组
@@ -100,6 +103,7 @@ class EventGroup:
         EventType.SESSION_RESUMED,
         EventType.SESSION_ENDED,
         EventType.SESSION_ERROR,
+        EventType.SESSION_STATE_CHANGED,
     ]
     
     MESSAGE_EVENTS = [
@@ -162,7 +166,8 @@ class EventGroup:
 | SESSION_PAUSED | 会话暂停 | SessionModule | AI引擎、心跳引擎 |
 | SESSION_RESUMED | 会话恢复 | SessionModule | AI引擎、心跳引擎 |
 | SESSION_ENDED | 会话结束 | SessionModule | AI引擎、心跳引擎、历史模块 |
-| SESSION_ERROR | 会话错误 | SessionModule | API层 |
+    | SESSION_ERROR | 会话错误 | SessionModule | API层 |
+    | SESSION_STATE_CHANGED | 会话状态变更 | SessionModule | 所有订阅状态的模块 |
 
 ### 3.4 消息事件
 
@@ -175,14 +180,32 @@ class EventGroup:
 
 ### 3.5 AI事件
 
-| 事件类型 | 触发时机 | 发布者 | 订阅者 |
-|---------|---------|--------|--------|
-| AI_THINK | AI开始思考 | AIDecisionEngine | 会话模块 |
-| AI_ACT | AI采取行动 | AIDecisionEngine | 会话模块、WebSocket |
-| AI_SKIP | AI选择跳过 | AIDecisionEngine | 会话模块 |
-| AI_HEARTBEAT | AI心跳 | HeartbeatEngine | AI引擎 |
-| AI_READY | AI准备就绪 | AIEngine | 会话模块 |
-| AI_THINKING | AI思考中 | AIEngine | WebSocket |
+> ⚠️ **重要**: AI事件处理说明
+
+| 事件类型 | 触发时机 | 发布者 | 订阅者 | 处理说明 |
+|---------|---------|--------|--------|----------|
+| AI_THINK | AI开始思考 | AIDecisionEngine | 会话模块 | 会话模块记录AI思考开始，更新参与者状态 |
+| AI_ACT | AI采取行动 | AIDecisionEngine | 会话模块、WebSocket | 会话模块处理AI动作，WebSocket推送前端显示 |
+| AI_SKIP | AI选择跳过 | AIDecisionEngine | 会话模块 | 会话模块处理跳过，更新回合进度 |
+| AI_HEARTBEAT | AI心跳 | HeartbeatEngine | AI引擎 | AI引擎更新活跃状态，检测超时 |
+| AI_READY | AI准备就绪 | AIEngine | 会话模块 | 会话模块更新参与者状态，触发下一回合 |
+| AI_THINKING | AI思考中 | AIEngine | WebSocket | WebSocket推送前端显示思考动画 |
+
+#### AI事件处理流程
+
+```
+AIDecisionEngine 决策流程:
+1. AI_THINK → 订阅者: SessionModule (记录思考开始)
+2. AI_ACT → 订阅者: SessionModule (处理动作), WebSocket (推送显示)
+3. AI_SKIP → 订阅者: SessionModule (处理跳过)
+
+AIEngine 思考流程:
+1. AI_THINKING → 订阅者: WebSocket (显示思考动画)
+2. AI_READY → 订阅者: SessionModule (准备就绪)
+
+HeartbeatEngine:
+1. AI_HEARTBEAT → 订阅者: AIEngine (心跳响应)
+```
 
 ### 3.6 系统事件
 
