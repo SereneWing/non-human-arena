@@ -97,6 +97,7 @@ class Session:
     """会话"""
     id: str
     name: str
+    topic: str = ""  # 辩论话题/讨论主题
     state: SessionState
     template_id: str
     role_ids: List[str] = field(default_factory=list)
@@ -109,11 +110,39 @@ class Session:
     participant_ids: List[str] = field(default_factory=list)
     
     def to_dict(self) -> Dict[str, Any]:
-        ...
+        return {
+            "id": self.id,
+            "name": self.name,
+            "topic": self.topic,
+            "state": self.state.value,
+            "template_id": self.template_id,
+            "role_ids": self.role_ids,
+            "config": self.config,
+            "metadata": self.metadata,
+            "created_at": self.created_at.isoformat() if isinstance(self.created_at, datetime) else self.created_at,
+            "started_at": self.started_at.isoformat() if self.started_at else None,
+            "ended_at": self.ended_at.isoformat() if self.ended_at else None,
+            "created_by": self.created_by,
+            "participant_ids": self.participant_ids
+        }
     
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "Session":
-        ...
+        return cls(
+            id=data["id"],
+            name=data["name"],
+            topic=data.get("topic", ""),
+            state=SessionState(data.get("state", "created")),
+            template_id=data.get("template_id", ""),
+            role_ids=data.get("role_ids", []),
+            config=data.get("config", {}),
+            metadata=data.get("metadata", {}),
+            created_at=datetime.fromisoformat(data["created_at"]) if "created_at" in data and isinstance(data["created_at"], str) else (data.get("created_at") or datetime.now()),
+            started_at=datetime.fromisoformat(data["started_at"]) if data.get("started_at") else None,
+            ended_at=datetime.fromisoformat(data["ended_at"]) if data.get("ended_at") else None,
+            created_by=data.get("created_by"),
+            participant_ids=data.get("participant_ids", [])
+        )
 
 @dataclass
 class SessionConfig:

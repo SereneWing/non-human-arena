@@ -1,5 +1,7 @@
 # LLM 模块数据结构
 
+> ⚠️ **重要**: `MessageRole` 枚举统一定义在 `4_modules_session/schemas.md` 中，本模块引用该定义。
+
 ## 一、LLM 相关配置
 
 ```python
@@ -8,19 +10,15 @@ from typing import Dict, List, Optional, Any
 from datetime import datetime
 from enum import Enum
 
+# 引用 session 模块的 MessageRole 定义
+from common.schemas import MessageRole  # 或 from session.schemas import MessageRole
+
 class LLMProvider(Enum):
     """LLM提供商"""
     OPENAI = "openai"
     ANTHROPIC = "anthropic"
     LOCAL = "local"
     CUSTOM = "custom"
-
-class MessageRole(Enum):
-    """消息角色"""
-    SYSTEM = "system"
-    USER = "user"
-    ASSISTANT = "assistant"
-    FUNCTION = "function"
 
 @dataclass
 class ModelConfig:

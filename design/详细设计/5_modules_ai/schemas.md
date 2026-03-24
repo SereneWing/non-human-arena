@@ -85,38 +85,16 @@ class ResponseConfig:
 
 ## 三、提示词模板
 
+> ⚠️ **重要**: 提示词模板统一定义在 `6_modules_llm/schemas.md` 的 `PromptLibrary` 中，本模块引用该定义。
+
 ```python
-@dataclass
-class PromptTemplate:
-    """提示词模板"""
-    system_prompt: str                    # 系统提示
-    user_template: str                    # 用户模板
-    examples: List[Dict[str, str]] = field(default_factory=list)
-    variables: List[str] = field(default_factory=list)
+# 引用 LLM 模块的提示词库
+from llm.schemas import PromptTemplate, PromptLibrary
 
-class DefaultPrompts:
-    """默认提示词"""
+# AI 模块专用提示词
+class AIPrompts:
+    """AI 模块专用提示词（补充 LLM 模块的模板）"""
     
-    DEBATE_SYSTEM_PROMPT = """你是一个参与辩论的角色扮演AI。
-你需要根据给定的角色设定和当前辩论情境，做出符合角色性格的回应。
-
-角色信息:
-- 姓名: {participant_name}
-- 角色描述: {role_description}
-- 性格特点: {personality_traits}
-- 说话风格: {speaking_style}
-
-辩论规则:
-{debate_rules}
-
-当前辩论状态:
-- 当前回合: {turn_number}/{max_turns}
-- 剩余时间: {time_remaining}秒
-- 对方观点: {opponent_viewpoint}
-
-请以角色的身份，基于上述信息，给出你的回应。
-"""
-
     MENTAL_ACTIVITY_PROMPT = """基于以下对话内容，描述角色的内心想法（心理活动）。
 要求:
 1. 符合角色性格
