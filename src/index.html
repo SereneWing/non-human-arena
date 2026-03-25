@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NonHumanArena - AI对话系统</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 NonHumanArena - 两个AI互相对话</h1>
+        
+        <!-- 配置区域 -->
+        <section class="config-section">
+            <h2>⚙️ API配置</h2>
+            <div class="config-row">
+                <input type="password" id="apiKeyInput" placeholder="输入 MiniMax API Key">
+                <select id="modelSelect">
+                    <option value="minimax-m2.7">MiniMax M2.7</option>
+                    <option value="abab6.5s-chat">ABAB 6.5S</option>
+                    <option value="abab6.5-chat">ABAB 6.5</option>
+                </select>
+                <input type="number" id="temperature" value="0.7" min="0" max="2" step="0.1" placeholder="温度" style="width: 80px;">
+                <input type="number" id="maxTokens" value="1000" min="100" max="4000" placeholder="最大Token" style="width: 100px;">
+                <button id="btnSaveConfig" class="btn-primary">💾 保存配置</button>
+                <span id="apiKeyDisplay" style="color: #666;">未设置</span>
+            </div>
+        </section>
+        
+        <!-- 角色配置区域 -->
+        <section class="agents-section">
+            <h2>🤖 角色设置</h2>
+            <div class="agents-grid">
+                <div class="agent-card">
+                    <h3>🅰️ 角色 1</h3>
+                    <input type="text" id="agent1Name" placeholder="角色名称" value="小明">
+                    <textarea id="agent1Personality" placeholder="性格特点（如：理性、冷静、逻辑清晰）">理性、冷静、逻辑清晰</textarea>
+                    <textarea id="agent1Desc" placeholder="详细描述（可选）"></textarea>
+                </div>
+                <div class="agent-card">
+                    <h3>🅱️ 角色 2</h3>
+                    <input type="text" id="agent2Name" placeholder="角色名称" value="小红">
+                    <textarea id="agent2Personality" placeholder="性格特点（如：感性、热情、表达生动）">感性、热情、表达生动</textarea>
+                    <textarea id="agent2Desc" placeholder="详细描述（可选）"></textarea>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 模式选择 -->
+        <section class="mode-section">
+            <h2>⚡ 对话模式</h2>
+            <div class="mode-options">
+                <label class="mode-option">
+                    <input type="radio" name="mode" id="modeManual" value="manual" checked>
+                    <span>📝 手动模式</span>
+                </label>
+                <label class="mode-option">
+                    <input type="radio" name="mode" id="modeAuto" value="auto">
+                    <span>🔄 自动模式</span>
+                </label>
+                <div class="auto-interval">
+                    <label for="autoInterval">间隔:</label>
+                    <input type="number" id="autoInterval" value="3" min="1" max="30">
+                    <span>秒</span>
+                </div>
+                <button id="btnStartConversation" class="btn-success">🚀 创建对话</button>
+            </div>
+        </section>
+        
+        <!-- 对话区域 -->
+        <section class="chat-section">
+            <h2>💬 对话</h2>
+            <div id="messagesContainer" class="chat-messages">
+                <div class="empty-state">
+                    <div class="icon">💭</div>
+                    <p>配置API Key后，创建对话开始聊天</p>
+                </div>
+            </div>
+            
+            <div class="actions">
+                <button id="btnGenerate1" class="btn-primary" disabled>🅰️ 小明发言</button>
+                <button id="btnGenerate2" class="btn-secondary" disabled>🅱️ 小红发言</button>
+                <button id="btnStartAuto" class="btn-outline" disabled>▶️ 启动自动</button>
+                <button id="btnStopAuto" class="btn-danger" disabled>⏹️ 停止自动</button>
+                <button id="btnClear" class="btn-warning">🗑️ 清空</button>
+            </div>
+            
+            <div id="status" class="status" style="display: none;"></div>
+        </section>
+    </div>
+    
+    <script src="/js/app.js"></script>
+</body>
+</html>

@@ -1,1 +1,0 @@
-# TypeScript Type Definitions
